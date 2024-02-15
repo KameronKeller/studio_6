@@ -4,8 +4,6 @@ void main() {
   runApp(const MyApp());
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -41,7 +39,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-
   final String title;
 
   @override
@@ -49,9 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
-  Map<String,String> forecast = {
+  Map<String, String> forecast = {
     "name": "today",
     "temperature": "35",
     "shortForecast": "Snowy",
@@ -60,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
     "windDirection": "SE",
     "isDaytime": "true",
     "probabilityOfPercipitation": "100"
-
   };
 
   Map<String, String> location = {
@@ -71,12 +65,127 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Text(location["city"]!);
+    return Scaffold(
+        body: SafeArea(
+            child: Column(
+              
+              children: [
+                Location(location: location),
+                WeatherIcon(condition: forecast['shortForecast']),
+                CurrentTempAndWind(
+                  temperature: forecast['temperature'],
+                  windSpeed: forecast['windSpeed'],
+                  windDirection: forecast['windDirection'],
+                ),
+                DetailedForecast(detailedForecast: forecast['detailedForecast'])
+              ],
+            )
+            ));
+  }
+}
+
+class DetailedForecast extends StatelessWidget {
+  const DetailedForecast({
+    super.key,
+    required this.detailedForecast,
+  });
+
+  final String? detailedForecast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(, top: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            children: [
+              Text("Detailed forecast:",
+              style: TextStyle(fontSize: 20)),
+              Text("$detailedForecast")
+          ],),
+        ],
+      ),
+    );
+  }
+}
+
+class CurrentTempAndWind extends StatelessWidget {
+  final String? temperature;
+  final String? windSpeed;
+  final String? windDirection;
+  String tempUnits = "F";
+  TextStyle style = const TextStyle(
+    fontSize: 30
+  );
+
+  CurrentTempAndWind({
+    super.key,
+    required this.temperature,
+    required this.windSpeed,
+    required this.windDirection,
+    String tempUnits = "F",
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text("$temperature ° $tempUnits", style: style),
+        Text("$windSpeed mph $windDirection", style: style)
+      ],
+    );
+  }
+}
+
+class WeatherIcon extends StatelessWidget {
+  final Map<String, IconData> weatherIcon = {
+    "Snowy": Icons.cloudy_snowing,
+  };
+
+  WeatherIcon({super.key, required this.condition});
+
+  final String? condition;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 50),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            weatherIcon[condition],
+            size: 100,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class Location extends StatelessWidget {
+  const Location({
+    super.key,
+    required this.location,
+  });
+
+  final Map<String, String> location;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 150, bottom: 50),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        Text("${location["city"]}, ${location["state"]} ${location["zip"]}",
+        style: const TextStyle(
+          fontSize: 25
+        ))
+      ]),
+    );
   }
 }
